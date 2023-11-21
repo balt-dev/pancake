@@ -1,6 +1,5 @@
 use crate::structures::*;
 use std::{str::FromStr, collections::HashMap, cmp::Ordering, io::BufRead};
-
 impl FromStr for Type {
     type Err = ();
 
@@ -96,7 +95,8 @@ impl Instruction {
                         Instruction::PushRegister(
                             parse_register!(value)
                         )
-                    }
+                    },
+                    _ => return Err(Error::InvalidInstruction)
                 }))
             },
             "pop" => {
@@ -235,7 +235,7 @@ impl Instruction {
 
 /// Parse an entire program from a string.
 pub fn parse_file(file: impl AsRef<str>) 
-    -> Result<Vec<Instruction>, (usize, Error)> 
+    -> Result<Vec<Instruction>, (usize, Error)>
 {
     let file = file.as_ref();
     let mut labels = HashMap::new();
@@ -253,7 +253,7 @@ pub fn parse_file(file: impl AsRef<str>)
                 labels.insert(label_name, index);
                 continue;
             }
-            if !word.starts_with("*") {
+            if !word.starts_with('*') {
                 // This line is an instruction
                 index += 1;
             }

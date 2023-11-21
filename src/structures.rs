@@ -1,6 +1,8 @@
 use std::fmt::{self, Display};
 
-#[derive(Debug, Clone)]
+// Does not implement Copy on purpose, so that move semantics (which apply in the language)
+// are easy to implement
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
 /// A singular value.
 pub enum Value {
     Integer(i64),
@@ -9,7 +11,7 @@ pub enum Value {
     Character(u8),
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 /// A type of a value.
 pub enum Type {
     Integer,
@@ -29,14 +31,14 @@ impl Display for Type {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 /// A register.
 pub enum Register {
     X,
     Y,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 /// A singular instruction.
 pub enum Instruction {
     /// Push an integer. 64-bit signed with two's complement wrapping.
@@ -131,7 +133,7 @@ pub enum Instruction {
     Break,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 /// An instance of an interpreter.
 pub struct Interpreter {
     pub x: Option<Value>,
@@ -139,7 +141,7 @@ pub struct Interpreter {
     pub stack: Vec<Value>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy)]
 /// A reason why execution of an instruction failed.
 pub enum Error {
     /// Attempted to divide integral values by zero.

@@ -10,7 +10,6 @@ use std::{
     },
     process::ExitCode, collections::HashMap, borrow::Borrow
 };
-use pancake::execute;
 
 // We use ExitCode to prevent the implicit Error: printout when using a Result<T, E>
 fn main() -> ExitCode {
@@ -29,7 +28,7 @@ fn main() -> ExitCode {
             let output = stdout().lock();
             // Read the file
             // This could be read line by line, but it would require a complex
-            // system of keeping track of whick instructions need labels,
+            // system of keeping track of which instructions need labels,
             // and that seems more complicated than I need.
             let program = match std::fs::read_to_string(filepath) {
                 Ok(file) => file,
@@ -38,13 +37,14 @@ fn main() -> ExitCode {
                     return ExitCode::FAILURE;
                 }
             };
-            let (labels, program) = match pancake::parse_file(program) {
+            let program = match pancake::parse_file(program) {
                 Ok(v) => v,
                 Err((location, why)) => {
                     eprintln!("Parsing error: {why} at line {location}");
                     return ExitCode::FAILURE;
                 }
             };
+            todo!("Execute line-by-line")
         }
     }
     ExitCode::SUCCESS

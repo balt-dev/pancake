@@ -1,4 +1,4 @@
-pub mod structures;
+pub(crate) mod structures;
 pub(crate) mod parser;
 
 use std::io::{
@@ -7,6 +7,7 @@ use std::io::{
 };
 
 pub use structures::*;
+pub use parser::parse_file;
 
 impl Interpreter {
     fn register(&mut self, register: Register) -> &mut Option<Value> {
@@ -33,7 +34,7 @@ impl Interpreter {
             Instruction::PushRegister(reg) => {
                 let Some(value) = self.register(reg).take() else {
                     return Err(Error::EmptyRegister)
-                }
+                };
             },
             Instruction::Pop(_) => todo!(),
             Instruction::Copy(_) => todo!(),
