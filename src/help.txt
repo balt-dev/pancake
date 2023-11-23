@@ -1,0 +1,4 @@
+Usage:
+	pancake <filepath>  Executes a program.
+	pancake --docs      Prints the documentation and exits.
+	pancake --license   Prints the license (MIT, with commercial clause removed) and exits.

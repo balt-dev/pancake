@@ -1,0 +1,24 @@
+	push character #00
+	push character '!'
+	push character 'd'
+	push character 'l'
+	push character 'r'
+	push character 'o'
+	push character 'w'
+	push character #20
+	push character ','
+	push character 'o'
+	push character 'l'
+	push character 'l'
+	push character 'e'
+	push character 'H'
+LOOP
+	pop X
+	copy
+	cast boolean X
+	not X
+	push register X
+	branch END
+	output Y
+	jump LOOP
+END

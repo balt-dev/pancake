@@ -1,0 +1,44 @@
+START
+	push integer 100 
+	push float -1.5e9
+	push boolean true 
+	push character 'H'
+	push character #00
+	push register X
+
+
+	pop X 
+	copy
+	swap
+	jump END
+	branch START
+	goto X
+	call END
+	return
+	compare equal
+	compare unequal
+	compare less
+	compare greater
+	add
+	subtract
+	multiply
+	divide
+	modulo
+	negate X
+	and 
+	or 
+	xor
+	not X
+	shift 
+	rotate
+	cast integer X
+	reinterpret integer X
+	input character X
+	read character X
+	output X
+	write X
+	random integer X
+	break
+	drop X
+	*Commenting out things!!
+END

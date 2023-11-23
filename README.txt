@@ -7,119 +7,153 @@ Pushing or operating with the X and Y registers empties them.
 Overdrawing the stack raises an error.
 Any text after the fields of a register is treated as a comment.
 
+All instructions have a tab stop character "\x09" before them.
+Labels can be marked by lines without a tab stop, and their names must not
+have whitespace in them.
+
+Any arithmetic instructions will silently overflow at the bounds of their types.
+
 Instructions
 
-- push integer 100: 
-    Push an integer. 64-bit signed with two's complement wrapping.
-- push float 1.5: 
-    Push a floating point. Double precision IEEE754.
-- push boolean true: 
+- push integer 100
+    Push an integer. Big-endian, 64-bit, signed, with two's complement wrapping.
+- push float 1.5
+    Push a floating point. Double precision IEEE754. NaN and +/- Infinity are able to be pushed using this.
+- push boolean true
     Push a boolean.
-- push character H: 
-    Push a character. Must be valid ASCII.
-    May be escaped with \x00 - \x7F.
-- push register X: 
+- push character 'H'
+    Push a character. Stored as an 8-bit unsigned integer, which is not necessarily
+    valid ASCII, but don't expect good results for I/O if it isn't kept that way.
+    Any ASCII whitespace cannot be written out, and has to be pushed with the below instruction.
+- push character #00
+	Push a character with an arbitrary numerical value. Hexadecimal.
+- push register X
     Push the value in the register.
     Errors if the register is empty.
-- pop X: 
-    Pop a stack value into one of two registers.
-- copy X: 
-    Copies the value in a register and pushes it to the stack.
-- length X: 
+- pop X
+    Pop a stack value into one of two registers, or _ to discard.
+- copy
+    Copies the value in register X into register Y.
+- length X
     Puts the current length of the stack, as an integer,
     into the given register.
 
-- label LOOP:
-    Sets a label to jump to.
-    This instruction is executed, unconditionally,
-    before execution of any other.
-- branch LOOP: 
+- jump LOOP
+    Always jumps to a label.
+- branch LOOP
     Jumps to a label if the value on the top of the stack is true,
     popping it. Errors if the value isn't a boolean.
+- goto X
+	Jumps to the instruction index specified by the integer in
+	the specified register. Exits if the value is negative or larger
+	than the program.
 
-- compare equal:
+- call LOOP
+	Does the same as branching, but additionally pushes the current
+	instruction index to the stack as an integer.
+	Meant to be used for function calls.
+- return
+	Pops an integer off of the stack and jumps to that instruction index.
+	Meant to be used for function calls. Exits if the value is negative
+	or larger than the program.
+
+- compare equal
     Compares the values in X and Y, and pushes the boolean result
-    to the stack. If "equal" or "nonequal", the values may be of differing
+    to the stack. If "equal" or "unequal", the values may be of differing
     types, but if "less" or "greater", an error is raised if they are.
     A boolean true is larger than a boolean false,
     and characters are compared by ASCII codepoint. 
     Floats follow IEEE745 logic, meaning NaN != NaN.
-- add:
+- add
     Adds X and Y, and pushes the result to the stack.
     Valid for integers and floats. Values must be the same type.
-- subtract:
+- subtract
     Subtracts X from Y, and pushes the result to the stack.
     Valid for integers and floats. Values must be the same type.
-- multiply:
+- multiply
     Multiplies X and Y, and pushes the result to the stack.
     Valid for integers and floats. Values must be the same type.
-- divide:
+- divide
     Divides X and Y, and pushes the quotient to the stack.
     Valid for integers and floats. Values must be the same type.
     Raises an error on integer division by 0.
-- modulo:
+- modulo
     Divides X and Y, and pushes the modulo
-    (euclidean remainder) to the stack.
+    (Euclidean remainder) to the stack.
     Valid for integers and floats. Values must be the same type.
     Raises an error on integer division by 0.
-- negate X:
+- negate X
     Negates the value of the register, and leaves it in said register.
     Valid for integers and floats. 
 
-- and: 
+- and
     Takes the bitwise or logical AND of X and Y, 
     and pushes the result to the stack.
     Valid for integers and booleans. Values must be the same type.
-- or: 
+- or
     Takes the bitwise or logical OR of X and Y,
     and pushes the result to the stack.
     Valid for integers and booleans. Values must be the same type.
-- xor:
+- xor
     Takes the bitwise or logical XOR of X and Y,
     and pushes the result to the stack.
     Valid for integers and booleans. Values must be the same type.
-- not X:
+- not X
     Takes the bitwise NOT of the register,
     and leaves it in said register.
     Valid for integers and booleans.
 
-- shift: 
-    Shifts the integer in X to the right by
+- shift
+    Logically right shifts the integer in X to the right by
     the signed integral amount of bits in Y,
     discarding extra bits and padding with 0, and pushes the result.
     Only valid for integers.
-- rotate:
+- rotate
     Shifts the integer in X to the right by
     the signed integral amount of bits in Y,
     wrapping extra bits to the other side, and pushes the result.
     Only valid for integers.
 
-- cast integer X:
+- cast integer X
     Attempts to cast the value in the register to the given type,
-    leaving it in place. Pushes a boolean returning whether or not
+    leaving it in place. Pushes a boolean returning whether
     the cast successfully completed.
-- reinterpret integer X:
+
+    You can cast booleans into integers and characters,
+    integers into booleans (!= 0), floats, and characters (% u8),
+    floats into integers (saturating at bounds and 0 for NaN),
+    and characters into booleans (!= 0) and integers.
+
+- reinterpret integer X
     Reinterprets the value in the register as the given type,
     without touching the bits.
-    Only valid for integers and floats.
 
-- input character X: 
+    You can reinterpret a boolean as an integer or a character,
+    an integer as a float (q_rsqrt, anyone?),
+    a float as an integer,
+    and a character as an integer.
+
+- input character X
     Grabs a value from stdin as text, and puts it into this register.
     If reading fails, an error is raised.
-- read character X:
+    If the given stdin string couldn't be parsed as a value,
+    the input is re-queried until it can be.
+- read character X
     Grabs a value from stdin as bytes, and puts it into this register.
     If reading fails, an error is raised.
-- output X:
+- output X
     Outputs the value in the register to stdout as text.
     If writing fails, an error is raised.
-- write X:
+- write X
     Outputs the value in the register to stdout as bytes.
     If writing fails, an error is raised.
 
-- random integer X:
+- random integer X
     Puts a random valid value of the specified type into the register.
     For floats, this may be any value in the half-open range [0.0, 1.0).
 - break
     Immediately halts the program.
+- drop X
+	Empties the register.
 - *...
     A comment. Lasts until the end of the line.
