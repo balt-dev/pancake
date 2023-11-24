@@ -109,8 +109,8 @@ pub enum Instruction {
     PushRegister(Register),
     /// Pop a stack value into one of two registers, or discards it.
     Pop(Option<Register>),
-    /// Copies the value in register X into register Y.
-    Copy,
+    /// Copies the value in this register to the other.
+    Copy(Register),
     /// Puts the current length of the stack, as an integer,
     /// into the given register.
     Length(Register),
@@ -192,6 +192,7 @@ pub enum Instruction {
     Call(usize),
     Return,
     Swap,
+    Debug
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -232,7 +233,7 @@ pub enum Error {
     /// Encountered an invalid instruction while parsing.
     InvalidInstruction,
     /// One or more registers targeted were empty.
-    EmptyRegister,
+    EmptyRegister(Register),
     /// One or more labels wasn't found.
     MissingLabel,
 }
@@ -249,7 +250,7 @@ impl Display for Error {
             }
             Error::StackUnderflow => write!(f, "encountered a stack underflow"),
             Error::InvalidInstruction => write!(f, "encountered an invalid instruction"),
-            Error::EmptyRegister => write!(f, "encountered an unexpected empty register"),
+            Error::EmptyRegister(reg) => write!(f, "encountered an unexpected empty register {reg:?}"),
             Error::MissingLabel => write!(f, "could not find a matching label"),
         }
     }

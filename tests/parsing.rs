@@ -15,7 +15,7 @@ fn parsing_test() {
             PushCharacter(b'\x00'),
             PushRegister(X),
             Pop(Some(X)),
-            Copy,
+            Copy(X),
             Swap,
             Jump(39),
             Branch(0),

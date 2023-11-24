@@ -8,7 +8,7 @@ START
 
 
 	pop X 
-	copy
+	copy X
 	swap
 	jump END
 	branch START

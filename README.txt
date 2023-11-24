@@ -18,7 +18,7 @@ Instructions
 - push integer 100
     Push an integer. Big-endian, 64-bit, signed, with two's complement wrapping.
 - push float 1.5
-    Push a floating point. Double precision IEEE754. NaN and +/- Infinity are able to be pushed using this.
+    Push a floating point. Double precision IEEE754. NaN and +/- Infinity are pushable using this.
 - push boolean true
     Push a boolean.
 - push character 'H'
@@ -32,8 +32,8 @@ Instructions
     Errors if the register is empty.
 - pop X
     Pop a stack value into one of two registers, or _ to discard.
-- copy
-    Copies the value in register X into register Y.
+- copy X
+    Copies the value in this register to the other.
 - length X
     Puts the current length of the stack, as an integer,
     into the given register.
@@ -155,5 +155,8 @@ Instructions
     Immediately halts the program.
 - drop X
 	Empties the register.
+- debug
+	Prints out the current state of the interpreter to stderr.
+	May do nothing on platforms where there is none.
 - *...
     A comment. Lasts until the end of the line.

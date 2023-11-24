@@ -1,0 +1,4 @@
+LOOP
+	read character X
+	write X
+	jump LOOP

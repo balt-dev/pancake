@@ -107,8 +107,10 @@ impl Instruction {
                     Some(parse_register!(register))
                 })))
             }
-            "copy" =>
-                Ok(Some(Instruction::Copy)),
+            "copy" => {
+                next_word!(words => register);
+                Ok(Some(Instruction::Copy(parse_register!(register))))
+            }
             "swap" =>
                 Ok(Some(Instruction::Swap)),
             "length" => {
@@ -224,6 +226,7 @@ impl Instruction {
                 };
                 Ok(Some(Instruction::Jump(*index)))
             }
+            "debug" => Ok(Some(Instruction::Debug)),
             // Comment
             line if line.starts_with('*') => Ok(None),
             _ => Err(Error::InvalidInstruction),
@@ -240,7 +243,7 @@ pub fn parse_file(file: impl AsRef<str>) -> Result<Vec<Instruction>, (usize, Err
     // so we can't enumerate for the jump indices
     let mut index = 0;
     for line in file.lines() {
-        if !line.starts_with('\t') {
+        if !(line.starts_with(|c: char| c.is_ascii_whitespace())) {
             labels.insert(line, index);
             continue;
         }

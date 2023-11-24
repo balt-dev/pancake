@@ -44,6 +44,7 @@ fn main() -> ExitCode {
             // We need to jump around, so we store the index externally
             let mut index = 0;
             while let Some(instr) = program.get(index) {
+                eprintln!("Instruction: {instr:?}");
                 if let Some(new_index) =
                     match interpreter.execute(index, *instr, &mut input, &mut output) {
                         Ok(v) => v,

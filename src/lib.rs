@@ -4,7 +4,7 @@ pub(crate) mod parser;
 pub(crate) mod structures;
 
 use rand::Rng;
-use std::io::{BufRead, BufReader, Read, Write};
+use std::io::{BufRead, BufReader, Read, stderr, Write};
 use std::str::FromStr;
 
 pub use parser::parse_file;
@@ -14,7 +14,7 @@ pub use structures::*;
 macro_rules! take {
     ($self: ident . $reg: ident) => {{
         let Some(value) = $self.register($reg).take() else {
-            return Err(Error::EmptyRegister);
+            return Err(Error::EmptyRegister($reg));
         };
         value
     }};
@@ -23,7 +23,7 @@ macro_rules! take {
 macro_rules! reg {
     ($self: ident . $reg: ident) => {{
         let Some(value) = $self.register($reg) else {
-            return Err(Error::EmptyRegister);
+            return Err(Error::EmptyRegister($reg));
         };
         value
     }};
@@ -109,17 +109,12 @@ impl<R: Rng> Interpreter<R> {
                 let register = self.register(reg);
                 let _ = register.insert(value);
             }
-            Instruction::Copy =>
-                self.y = Some(reg!(self.X).clone()),
+            Instruction::Copy(reg) => match reg {
+                X => self.y = Some(reg!(self.X).clone()),
+                Y => self.x = Some(reg!(self.Y).clone())
+            },
             Instruction::Swap =>  {
-                // Can't use reg! macro due to borrow checker pains
-                let Some(x) = &mut self.x else {
-                    return Err(Error::EmptyRegister);
-                };
-                let Some(y) = &mut self.y else {
-                    return Err(Error::EmptyRegister);
-                };
-                std::mem::swap(x, y);
+                std::mem::swap(&mut self.x, &mut self.y);
             },
             Instruction::Length(reg) => {
             // Even on 64-bit, stack length has to be at most i64::MAX, so this is fine
@@ -354,6 +349,9 @@ impl<R: Rng> Interpreter<R> {
             }
             Instruction::Break => return Ok(Some(usize::MAX)),
             Instruction::Drop(reg) => *self.register(reg) = None,
+            Instruction::Debug => {
+                eprintln!("X: {:?}\tY: {:?}\nStack: {:?}", self.x, self.y, self.stack)
+            }
         }
         Ok(None)
     }

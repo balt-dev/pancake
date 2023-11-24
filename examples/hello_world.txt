@@ -14,7 +14,7 @@
 	push character 'H'
 LOOP
 	pop X
-	copy
+	copy X
 	cast boolean X
 	not X
 	push register X
