@@ -1,0 +1,4 @@
+	push integer 10
+	pop X
+	push integer 1
+	pop Y

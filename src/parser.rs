@@ -259,7 +259,7 @@ pub fn parse_file(file: impl AsRef<str>) -> Result<Vec<Instruction>, (usize, Err
     // Now for the actual parsing
     for (index, line) in file.lines().enumerate() {
         // We already handled labels
-        if !line.starts_with('\t') {
+        if !line.starts_with(|c: char| c.is_ascii_whitespace()) {
             continue;
         }
         // Option<T> is an iterator!
