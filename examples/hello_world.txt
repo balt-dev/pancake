@@ -1,4 +1,5 @@
 	push character #00
+    push character #0A
 	push character '!'
 	push character 'd'
 	push character 'l'
@@ -12,13 +13,17 @@
 	push character 'l'
 	push character 'e'
 	push character 'H'
-LOOP
-	pop X
-	copy X
-	cast boolean X
-	not X
-	push register X
-	branch END
-	output Y
-	jump LOOP
+    
+PRINTSTR
+    pop X
+    * Copy and check
+    copy X
+    cast boolean X
+    not X
+    push register X
+    * If == 0, return
+    branch END
+    * Else, write and jump
+    write Y
+    jump PRINTSTR
 END

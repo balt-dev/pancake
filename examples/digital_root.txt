@@ -1,0 +1,117 @@
+    * Sum value
+    push integer 0
+    input integer X
+    push register X
+LOOP
+    * Copy the original value
+    pop X
+    copy X
+    push register Y
+    
+    * Divide by 10
+    push integer 10
+    pop Y
+    divide
+
+    * Get the original, keeping the divided
+    pop X * /10
+    pop Y * Orig
+    push register X
+    
+    * Put the value in X instead of Y
+    push register Y
+    pop X
+    
+    * Modulo by 10
+    push integer 10
+    pop Y
+    modulo
+    
+    * Now, we have the sum, the number / 10, and the number % 10
+    * We need to get %10 and sum next to each other for the sum
+
+    * Rotate
+    pop X
+    pop Y
+    swap Y 0
+    push register X
+    push register Y
+    
+    * Now, /10, %10, and sum
+    * Add the two
+    pop X
+    pop Y
+    add
+    
+    * Now, we have /10 and the sum, which need to be reversed
+    pop X
+    pop Y
+    push register X
+    push register Y
+    
+    * Copy and check if the divided value is 0
+    pop X
+    copy X
+    push register Y
+
+    push integer 0
+    pop Y
+    compare equal
+
+    branch NUM_FINISHED
+    
+    * Continue
+    jump LOOP
+
+NUM_FINISHED
+    * Check if the number is less than 10 and greater than -10
+    * We still have some garbage from dividing by 10 that we don't need
+    pop _
+    pop X
+    
+    * Copy the value, we need it later
+    copy X
+    push register Y
+
+    call ABS_X
+    
+    * Check if less than 10
+    push integer 10
+    pop Y
+    compare less
+    branch END
+    
+    * Didn't catch the branch, so we need to set up the loop again
+    pop X
+    
+    * Push a new sum value
+    push integer 0
+    push register X
+    
+    * Continue looping
+    jump LOOP
+
+* Absolute value
+ABS_X
+    copy X
+    push register Y
+    push integer 0
+    pop Y
+    compare greater
+    branch RETURN_ABS
+    jump NEG_ABS
+RETURN_ABS
+    pop X
+    return
+NEG_ABS
+    pop X
+    negate X
+    return
+
+END
+    * Print the value, then a newline
+    pop X
+    output X
+    push character #0A
+    pop X
+    write X

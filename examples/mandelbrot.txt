@@ -1,0 +1,390 @@
+* Width: 60
+* Height: 40
+* Iterations: 16
+
+* X and Y increase by .05 each time
+
+    push float -1
+WIDTHLOOP
+    push float -2
+CELLLOOP
+    * Y X | _ _
+    pop X * Y | X _
+    * Duplicate the value
+    copy X * Y | X X
+    swap X 0 * X | Y X
+    push register Y * X X | Y _
+    copy X * X X | Y Y
+    swap X 0 * X Y | Y X
+    push register Y * X Y X | Y _
+
+    * Duplicate again
+    copy X * X Y Y | X X
+    swap X 0 * X Y X | Y X
+    push register Y * X Y X X | Y _
+    copy X * X Y X X | Y Y
+    swap X 0 * X Y X Y | Y X
+    push register X * X Y X Y X | Y _
+    push register Y * X Y X Y X Y
+
+    * Unrolled loop of 8 iterations
+
+    
+
+    * Square
+    call SQCOMP
+
+    * Add the numbers
+    * X Y X Y R I | _ _
+    pop Y
+    pop X * X Y X Y | R I
+    swap Y 1
+    add * X Y Y I R+X
+    pop Y
+    pop X
+    swap Y 0 * X Y R+X | Y I
+    add * X Y R+X I+Y
+    
+    * Duplicate X and Y
+    pop X * X Y R+X | I+Y _
+    swap X 2 * I+Y Y R+X | X _
+    copy X * I+Y Y R+X | X X
+    swap Y 2 * X Y R+X | X I+Y
+    swap X 0 * X Y X | R+X I+Y
+    push register Y * X Y X I+Y | R+X _
+    swap X 2 * X R+X X I+Y | Y _
+    copy X * X R+X X I+Y | Y Y
+    swap X 2 * X Y X I+Y | R+X Y
+    swap Y 0 * X Y X Y | R+X I+Y
+
+    push register X
+    push register Y
+
+    * Square
+    call SQCOMP
+
+    * Add the numbers
+    * X Y X Y R I | _ _
+    pop Y
+    pop X * X Y X Y | R I
+    swap Y 1
+    add * X Y Y I R+X
+    pop Y
+    pop X
+    swap Y 0 * X Y R+X | Y I
+    add * X Y R+X I+Y
+
+    * Duplicate X and Y
+    pop X * X Y R+X | I+Y _
+    swap X 2 * I+Y Y R+X | X _
+    copy X * I+Y Y R+X | X X
+    swap Y 2 * X Y R+X | X I+Y
+    swap X 0 * X Y X | R+X I+Y
+    push register Y * X Y X I+Y | R+X _
+    swap X 2 * X R+X X I+Y | Y _
+    copy X * X R+X X I+Y | Y Y
+    swap X 2 * X Y X I+Y | R+X Y
+    swap Y 0 * X Y X Y | R+X I+Y
+
+    push register X
+    push register Y
+
+    * Square
+    call SQCOMP
+
+    * Add the numbers
+    * X Y X Y R I | _ _
+    pop Y
+    pop X * X Y X Y | R I
+    swap Y 1
+    add * X Y Y I R+X
+    pop Y
+    pop X
+    swap Y 0 * X Y R+X | Y I
+    add * X Y R+X I+Y
+
+    * Duplicate X and Y
+    pop X * X Y R+X | I+Y _
+    swap X 2 * I+Y Y R+X | X _
+    copy X * I+Y Y R+X | X X
+    swap Y 2 * X Y R+X | X I+Y
+    swap X 0 * X Y X | R+X I+Y
+    push register Y * X Y X I+Y | R+X _
+    swap X 2 * X R+X X I+Y | Y _
+    copy X * X R+X X I+Y | Y Y
+    swap X 2 * X Y X I+Y | R+X Y
+    swap Y 0 * X Y X Y | R+X I+Y
+
+    push register X
+    push register Y
+
+    * Square
+    call SQCOMP
+
+    * Add the numbers
+    * X Y X Y R I | _ _
+    pop Y
+    pop X * X Y X Y | R I
+    swap Y 1
+    add * X Y Y I R+X
+    pop Y
+    pop X
+    swap Y 0 * X Y R+X | Y I
+    add * X Y R+X I+Y
+
+    * Duplicate X and Y
+    pop X * X Y R+X | I+Y _
+    swap X 2 * I+Y Y R+X | X _
+    copy X * I+Y Y R+X | X X
+    swap Y 2 * X Y R+X | X I+Y
+    swap X 0 * X Y X | R+X I+Y
+    push register Y * X Y X I+Y | R+X _
+    swap X 2 * X R+X X I+Y | Y _
+    copy X * X R+X X I+Y | Y Y
+    swap X 2 * X Y X I+Y | R+X Y
+    swap Y 0 * X Y X Y | R+X I+Y
+
+    push register X
+    push register Y
+
+    * Square
+    call SQCOMP
+
+    * Add the numbers
+    * X Y X Y R I | _ _
+    pop Y
+    pop X * X Y X Y | R I
+    swap Y 1
+    add * X Y Y I R+X
+    pop Y
+    pop X
+    swap Y 0 * X Y R+X | Y I
+    add * X Y R+X I+Y
+
+    * Duplicate X and Y
+    pop X * X Y R+X | I+Y _
+    swap X 2 * I+Y Y R+X | X _
+    copy X * I+Y Y R+X | X X
+    swap Y 2 * X Y R+X | X I+Y
+    swap X 0 * X Y X | R+X I+Y
+    push register Y * X Y X I+Y | R+X _
+    swap X 2 * X R+X X I+Y | Y _
+    copy X * X R+X X I+Y | Y Y
+    swap X 2 * X Y X I+Y | R+X Y
+    swap Y 0 * X Y X Y | R+X I+Y
+
+    push register X
+    push register Y
+
+    * Square
+    call SQCOMP
+
+    * Add the numbers
+    * X Y X Y R I | _ _
+    pop Y
+    pop X * X Y X Y | R I
+    swap Y 1
+    add * X Y Y I R+X
+    pop Y
+    pop X
+    swap Y 0 * X Y R+X | Y I
+    add * X Y R+X I+Y
+
+    * Duplicate X and Y
+    pop X * X Y R+X | I+Y _
+    swap X 2 * I+Y Y R+X | X _
+    copy X * I+Y Y R+X | X X
+    swap Y 2 * X Y R+X | X I+Y
+    swap X 0 * X Y X | R+X I+Y
+    push register Y * X Y X I+Y | R+X _
+    swap X 2 * X R+X X I+Y | Y _
+    copy X * X R+X X I+Y | Y Y
+    swap X 2 * X Y X I+Y | R+X Y
+    swap Y 0 * X Y X Y | R+X I+Y
+
+    push register X
+    push register Y
+
+    * Square
+    call SQCOMP
+
+    * Add the numbers
+    * X Y X Y R I | _ _
+    pop Y
+    pop X * X Y X Y | R I
+    swap Y 1
+    add * X Y Y I R+X
+    pop Y
+    pop X
+    swap Y 0 * X Y R+X | Y I
+    add * X Y R+X I+Y
+
+    * Duplicate X and Y
+    pop X * X Y R+X | I+Y _
+    swap X 2 * I+Y Y R+X | X _
+    copy X * I+Y Y R+X | X X
+    swap Y 2 * X Y R+X | X I+Y
+    swap X 0 * X Y X | R+X I+Y
+    push register Y * X Y X I+Y | R+X _
+    swap X 2 * X R+X X I+Y | Y _
+    copy X * X R+X X I+Y | Y Y
+    swap X 2 * X Y X I+Y | R+X Y
+    swap Y 0 * X Y X Y | R+X I+Y
+
+    push register X
+    push register Y
+
+    * Square
+    call SQCOMP
+
+    * Add the numbers
+    * X Y X Y R I | _ _
+    pop Y
+    pop X * X Y X Y | R I
+    swap Y 1
+    add * X Y Y I R+X
+    pop Y
+    pop X
+    swap Y 0 * X Y R+X | Y I
+    add * X Y R+X I+Y
+
+    * No need to duplicate, it's already what we want
+    
+    * X Y (Z^2+C).r (Z^2+C).i
+
+    * Now that we're done with iterations, check
+    * Is the number less than 2 in magnitude
+
+    * Square imaginary
+    pop X
+    copy X
+    multiply
+    * X Y R I^2
+    pop X
+    swap X 0
+    copy X
+    multiply
+    * X Y I^2 R^2
+    pop X
+    pop Y
+    add
+    * X Y MAG^2
+    push float 4.0 * 2^2
+    pop Y
+    pop X
+    compare less * (MAG^2) < (2.0^2)
+    branch FILL
+    jump EMPTY
+    
+CELLEND
+    * X Y | _ _
+    * Swap X and Y
+    pop X
+    swap X 0 * Y | X _
+    copy X * Y | X X
+    push register Y * Y X | X _
+    * Check if >1
+    push float 1.0
+    pop Y
+    compare less
+    branch CELLLOOP_SETUP * go to next cell in X
+    * Y X | _ _
+    pop Y
+    pop X * | Y X
+    push register Y * X | Y _
+    copy X * X | Y Y
+    push register Y * X Y | Y _
+    push float 1.0
+    pop Y
+    compare less
+    branch WIDTHLOOP_SETUP * go to next line
+    * If we're here, the full image is printed
+    push character #0A
+    pop X
+    write X
+    break
+
+CELLLOOP_SETUP
+    * Y X | _ _
+    * Add 0.05 to X
+    pop X
+    push float 0.05
+    pop Y
+    add
+    * Y X+0.05 | _ _
+    jump CELLLOOP
+
+WIDTHLOOP_SETUP
+    * X Y | _  _
+    * We need to discard the X, since it's at the end
+    pop X
+    pop _ * | Y _
+    push float 0.05
+    pop Y
+    add * Y+0.05 | _ _
+    push character #0A
+    pop X
+    write X
+    jump WIDTHLOOP
+    
+FILL
+    push character '#'
+    pop X
+    write X
+    jump CELLEND
+
+EMPTY
+    push character #20
+    pop X
+    write X
+    jump CELLEND
+
+SQCOMP
+    * R I RET | _ _
+    * Need to get return index out of the way
+    pop Y
+    pop X * R | I RET
+    swap Y 0 * RET | I R
+    push register X * RET I | _ R
+    * Copy the real value
+    copy Y    * I | R R
+    push register Y * I R | R _
+    * Square the real value
+    copy X * I R | R R
+    multiply * I R R^2 | _ _
+    * Get the imaginary value
+    pop Y
+    pop X * I | R R^2
+    swap X 0 * R | I R^2
+    push register Y * R R^2 | I _
+    * Copy the imaginary valie
+    copy X
+    push register Y * R R^2 I | I _
+    * Square the value
+    copy X
+    multiply
+    * R R^2 I I^2
+    * Grab the real and imaginary squares and subtract them
+    pop Y
+    pop X
+    swap X 0 * R I | R^2 I^2
+    subtract * R I (R^2-I^2)
+    * Get the real and imaginary
+    pop Y
+    pop X * R | I (R^2-I^2)
+    swap Y 0 * (R^2-I^2) | I R
+    multiply
+    * (R^2-I^2) (RI)
+    push float 2
+    pop X
+    pop Y
+    multiply
+    * (R^2-I^2) (2RI)
+    * Done!
+    * Now, put the return index back so we can return
+    pop Y * RET (R^2-I^2) | _ (2RI)
+    pop X * RET | (R^2-I^2) (2RI)
+    swap X 0 * (R^2-I^2) | RET (2RI)
+    push register Y * (R^2-I^2) (2RI) | RET _
+    push register X * (R^2-I^2) (2RI) RET | _ _
+    return

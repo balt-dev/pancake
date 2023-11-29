@@ -1,0 +1,18 @@
+* Prints a null-terminated string.
+PRINTSTR
+    * Need to get the return index out of the way
+    pop Y
+    pop X
+    push register Y
+    * Copy and check
+    copy X
+    cast boolean X
+    not X
+    push register X
+    * If == 0, return
+    branch PRINTEND
+    * Else, write and jump
+    write Y
+    jump PRINTSTR
+PRINTEND
+    return

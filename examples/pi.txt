@@ -1,0 +1,73 @@
+    push float 0 * sum
+    push float 1 * denominator
+LOOP
+    * Copy denominator
+    pop X
+    copy X
+    push register X
+    * Denominator is now in Y
+    push float 1
+    pop X
+    divide
+    * Sum, denom, recip
+    pop Y
+    pop X
+    swap X 0 * denom | sum recip
+    add * denom sum
+    * Push sum, add 2 to denom
+    pop X
+    pop Y
+    push register X
+    push float 2.0
+    pop X
+    add
+    pop Y
+    * Copy the denominator
+    copy Y
+    push register X
+    * Do the same thing again, but subtract this time
+    push float 1
+    pop X
+    divide
+    * Sum, denom, recip
+    pop Y
+    pop X
+    swap X 0
+    subtract * denom sum
+    * Swap denominator and sum
+    pop X
+    pop Y
+    push register X
+    * Increase denominator by 2
+    push float 2.0
+    pop X
+    add
+    * Check if denominator is above a threshold
+    pop X
+    copy X
+    push register Y
+
+
+    * Change this value to change the threshold
+    push float 100000
+
+    
+    pop Y
+    compare greater
+    branch END
+    jump LOOP
+END
+    pop _
+    * Print sum * 4
+    pop X
+    copy X
+    push register Y
+    push float 4.0
+    pop Y
+    multiply
+    pop X
+    output X
+    * Print newline
+    push character #0A
+    pop X
+    write X

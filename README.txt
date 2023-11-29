@@ -7,8 +7,8 @@ Pushing or operating with the X and Y registers empties them.
 Overdrawing the stack raises an error.
 Any text after the fields of a register is treated as a comment.
 
-All instructions have a tab stop character "\x09" before them.
-Labels can be marked by lines without a tab stop, and their names must not
+All instructions have any amount of whitespace before them.
+Labels can be marked by lines without whitespace, and their names must not
 have whitespace in them.
 
 Any arithmetic instructions will silently overflow at the bounds of their types.
@@ -37,6 +37,10 @@ Instructions
 - length X
     Puts the current length of the stack, as an integer,
     into the given register.
+- swap X 0
+    Swaps the value in this regsiter
+    with the value in at the value at the index
+    of the top of the stack minus the given value.
 
 - jump LOOP
     Always jumps to a label.
@@ -53,7 +57,7 @@ Instructions
 	instruction index to the stack as an integer.
 	Meant to be used for function calls.
 - return
-	Pops an integer off of the stack and jumps to that instruction index.
+	Pops an integer off of the stack and jumps to that instruction index plus one.
 	Meant to be used for function calls. Exits if the value is negative
 	or larger than the program.
 
@@ -144,6 +148,8 @@ Instructions
 - output X
     Outputs the value in the register to stdout as text.
     If writing fails, an error is raised.
+    Writing characters prints them escaped, including things like newlines.
+    If you don't want this, use write.
 - write X
     Outputs the value in the register to stdout as bytes.
     If writing fails, an error is raised.

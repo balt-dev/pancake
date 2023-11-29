@@ -1,0 +1,12 @@
+    input boolean X
+    push register X
+    branch LOOP
+    push boolean false
+    pop X
+    output X
+    break
+LOOP
+    push boolean true
+    pop X
+    output X
+    jump LOOP

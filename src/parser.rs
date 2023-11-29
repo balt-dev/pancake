@@ -53,7 +53,7 @@ macro_rules! parse_type {
             };
             value
         } else {
-                                        eprintln!("bad formatting");
+            eprintln!("bad formatting");
 
             return Err(Error::InvalidInstruction);
         }
@@ -76,7 +76,10 @@ macro_rules! next_word {
 
 impl Instruction {
     /// Parse an instruction.
-    pub fn parse(mut line: &str, labels: &HashMap<&str, usize>) -> Result<Option<Instruction>, Error> {
+    pub fn parse(
+        mut line: &str,
+        labels: &HashMap<&str, usize>,
+    ) -> Result<Option<Instruction>, Error> {
         // Split the instruction into its parts
         line = line.trim();
         let mut words = line.split_ascii_whitespace();
@@ -111,8 +114,14 @@ impl Instruction {
                 next_word!(words => register);
                 Ok(Some(Instruction::Copy(parse_register!(register))))
             }
-            "swap" =>
-                Ok(Some(Instruction::Swap)),
+            "swap" => {
+                next_word!(words => register);
+                next_word!(words => index);
+                Ok(Some(Instruction::Swap(
+                    parse_register!(register),
+                    parse_type!(index as usize)
+                )))
+            }
             "length" => {
                 next_word!(words => register);
                 Ok(Some(Instruction::Length(parse_register!(register))))
@@ -235,7 +244,9 @@ impl Instruction {
 }
 
 /// Parse an entire program from a string.
-pub fn parse_file(file: impl AsRef<str>) -> Result<Vec<Instruction>, (usize, Error)> {
+/// Returns a vector of tuples of an instruction and what line it's on.
+/// Returns an error in case of a parsing failure.
+pub fn parse_file(file: impl AsRef<str>) -> Result<Vec<(usize, Instruction)>, (usize, Error)> {
     let file = file.as_ref();
     let mut labels = HashMap::new();
     // Need to do two iterations, one for labels
@@ -263,7 +274,11 @@ pub fn parse_file(file: impl AsRef<str>) -> Result<Vec<Instruction>, (usize, Err
             continue;
         }
         // Option<T> is an iterator!
-        instructions.extend(Instruction::parse(line, &labels).map_err(|err| (index, err))?)
+        instructions.extend(
+            Instruction::parse(line, &labels)
+            .map_err(|err| (index, err))?
+            .map(|v| (index, v))
+        )
     }
     Ok(instructions)
 }

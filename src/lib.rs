@@ -4,7 +4,7 @@ pub(crate) mod parser;
 pub(crate) mod structures;
 
 use rand::Rng;
-use std::io::{BufRead, BufReader, Read, stderr, Write};
+use std::io::{BufRead, BufReader, Read, Write};
 use std::str::FromStr;
 
 pub use parser::parse_file;
@@ -79,7 +79,7 @@ impl<R: Rng> Interpreter<R> {
     }
 
     fn pop(&mut self) -> Result<Value, Error> {
-        self.stack.pop().ok_or(Error::StackUnderflow)
+        self.stack.pop().ok_or(Error::StackOutOfBounds(0))
     }
 
     /// Execute an instruction in this interpreter.
@@ -91,6 +91,7 @@ impl<R: Rng> Interpreter<R> {
         instr: Instruction,
         mut input: impl Read,
         mut output: impl Write,
+        line_number: Option<usize>
     ) -> Result<Option<usize>, Error> {
         use Register::*;
         match instr {
@@ -105,19 +106,36 @@ impl<R: Rng> Interpreter<R> {
             }
             Instruction::Pop(reg) => {
                 let value = self.pop()?;
-                let Some(reg) = reg else {return Ok(None)};
+                let Some(reg) = reg else { return Ok(None) };
                 let register = self.register(reg);
                 let _ = register.insert(value);
             }
             Instruction::Copy(reg) => match reg {
                 X => self.y = Some(reg!(self.X).clone()),
-                Y => self.x = Some(reg!(self.Y).clone())
+                Y => self.x = Some(reg!(self.Y).clone()),
             },
-            Instruction::Swap =>  {
-                std::mem::swap(&mut self.x, &mut self.y);
-            },
+            Instruction::Swap(reg, idx) => {
+                // Due to lifetime issues, we can't use the ergonomic helpers we made,
+                // since those don't work with partial brorows. :(
+                let Some(register) = (match reg {
+                    Register::X => &mut self.x,
+                    Register::Y => &mut self.y,
+                }) else {
+                    return Err(Error::EmptyRegister(reg));
+                };
+                let Some(stack) = 
+                    self.stack.len()
+                    .checked_sub(1 + idx)
+                    .and_then(|v| self.stack.get_mut(v))
+                else {
+                    return Err(Error::StackOutOfBounds(
+                        (self.stack.len() as i64) - (1 + idx as i64)
+                    ));
+                };
+                std::mem::swap(register, stack);
+            }
             Instruction::Length(reg) => {
-            // Even on 64-bit, stack length has to be at most i64::MAX, so this is fine
+                // Even on 64-bit, stack length has to be at most i64::MAX, so this is fine
                 *self.register(reg) = Some((self.stack.len() as i64).into())
             }
             // Moving around the instruction pointer
@@ -144,7 +162,7 @@ impl<R: Rng> Interpreter<R> {
                 let Value::Integer(to) = popped else {
                     return Err(Error::InvalidType(popped.get_type()));
                 };
-                return Ok(Some(to as usize));
+                return Ok(Some(to as usize + 1));
             }
             // Math!
             Instruction::Compare(kind) => {
@@ -350,7 +368,16 @@ impl<R: Rng> Interpreter<R> {
             Instruction::Break => return Ok(Some(usize::MAX)),
             Instruction::Drop(reg) => *self.register(reg) = None,
             Instruction::Debug => {
-                eprintln!("X: {:?}\tY: {:?}\nStack: {:?}", self.x, self.y, self.stack)
+                eprint!("Debugging");
+                if let Some(n) = line_number {
+                    eprint!(" at line #{}", n+1);
+                } else {
+                    eprint!(" at instruction #{}", index+1);
+                }
+                eprintln!(
+                    "\nX: {:?}\tY: {:?}\nStack: {:?}",
+                    self.x, self.y, self.stack
+                )
             }
         }
         Ok(None)

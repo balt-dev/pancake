@@ -9,7 +9,7 @@ START
 
 	pop X 
 	copy X
-	swap
+	swap X 0
 	jump END
 	branch START
 	goto X
@@ -40,5 +40,5 @@ START
 	random integer X
 	break
 	drop X
-	*Commenting out things!!
+	* Commenting out things!!
 END

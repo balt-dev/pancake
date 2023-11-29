@@ -16,7 +16,7 @@ fn parsing_test() {
             PushRegister(X),
             Pop(Some(X)),
             Copy(X),
-            Swap,
+            Swap(X, 0),
             Jump(39),
             Branch(0),
             Goto(X),

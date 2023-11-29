@@ -36,19 +36,20 @@ fn main() -> ExitCode {
             let program = match pancake::parse_file(program) {
                 Ok(v) => v,
                 Err((location, why)) => {
-                    eprintln!("Parsing error: {why} at line {location}");
+                    // Lines are usually counted from 1
+                    eprintln!("Parsing error: {why} at line {}", location + 1);
                     return ExitCode::FAILURE;
                 }
             };
             let mut interpreter = Interpreter::default();
             // We need to jump around, so we store the index externally
             let mut index = 0;
-            while let Some(instr) = program.get(index) {
+            while let Some((line, instr)) = program.get(index) {
                 if let Some(new_index) =
-                    match interpreter.execute(index, *instr, &mut input, &mut output) {
+                    match interpreter.execute(index, *instr, &mut input, &mut output, Some(*line)) {
                         Ok(v) => v,
                         Err(err) => {
-                            eprintln!("Runtime error: {err} at instruction #{index} ({instr:?})");
+                            eprintln!("Runtime error: {err} at line #{line} ({instr:?})");
                             return ExitCode::FAILURE;
                         }
                     }

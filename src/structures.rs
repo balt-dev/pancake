@@ -191,7 +191,7 @@ pub enum Instruction {
     Jump(usize),
     Call(usize),
     Return,
-    Swap,
+    Swap(Register, usize),
     Debug
 }
 
@@ -228,8 +228,8 @@ pub enum Error {
     InvalidType(Type),
     /// Mismatched types for an instruction.
     MismatchedTypes(Type, Type),
-    /// The stack was popped while empty.
-    StackUnderflow,
+    /// The stack was accessed at an invalid index.
+    StackOutOfBounds(i64),
     /// Encountered an invalid instruction while parsing.
     InvalidInstruction,
     /// One or more registers targeted were empty.
@@ -248,7 +248,7 @@ impl Display for Error {
             Error::MismatchedTypes(ty1, ty2) => {
                 write!(f, "failed to operate with types {ty1} and {ty2}")
             }
-            Error::StackUnderflow => write!(f, "encountered a stack underflow"),
+            Error::StackOutOfBounds(index) => write!(f, "failed to access stack value #{index}"),
             Error::InvalidInstruction => write!(f, "encountered an invalid instruction"),
             Error::EmptyRegister(reg) => write!(f, "encountered an unexpected empty register {reg:?}"),
             Error::MissingLabel => write!(f, "could not find a matching label"),

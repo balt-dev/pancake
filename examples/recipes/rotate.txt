@@ -1,0 +1,13 @@
+* Rotates the last 3 values on the stack.
+
+* A B C | _ _
+pop X
+* A B | C _
+pop Y
+* A | C B
+swap Y 0
+* B | C A
+push register X
+* B C | _ A
+push register Y
+* B C A | _ _

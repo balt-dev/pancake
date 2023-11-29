@@ -1,0 +1,115 @@
+    push integer 0
+LOOP
+    * Increment number by one
+    pop X
+    push integer 1
+    pop Y
+    add
+    * Copy last number to X for % 3
+    pop X
+    copy X
+    push register Y * N | N _
+    * Copy again for % 5
+    copy X
+    push register Y * N N | N _
+    * Check if % 3
+    push integer 3
+    pop Y
+    modulo * N N (N%3) | _ _
+    pop X
+    push integer 0
+    pop Y * N N | (N%3) 0
+    compare equal * N N Fizz | _ _
+    * We've stored % 3, now get another copy for Buzz
+    pop Y
+    pop X
+    push register Y * N Fizz | N _
+    push integer 5
+    pop Y
+    modulo * N Fizz (N%5) | _ _
+    pop X 
+    push integer 0
+    pop Y
+    compare equal * N Fizz Buzz | _ _
+    * Now, we need to store if either of them are
+    * Let's copy them
+    pop X
+    copy X
+    push register Y * N Fizz Buzz | Buzz _ 
+    pop Y
+    swap Y 0
+    push register X * N Buzz Buzz | _ Fizz
+    copy Y
+    push register Y 
+    push register X * N Buzz Buzz Fizz Fizz | _ _
+    * We need them side by size, so we rotate
+    pop X
+    pop Y
+    swap Y 0 * Buzz Buzz Fizz Fizz -> Buzz Fizz | Fizz Buzz
+    or * N Buzz Fizz Fizz/Buzz | _ _
+    pop X
+    not X
+    push register X * N Buzz Fizz !Fizz&!Buzz | _ _
+    branch PRINTNUMBER * N Buzz Fizz
+    branch FIZZ
+LOOPBUZZ
+    branch BUZZ
+LOOPEND
+    * Print a newline
+    push character #0A
+    pop X
+    write X
+    jump LOOP
+
+PRINTNUMBER
+    * Pop out the fizz and buzz
+    pop _
+    pop _
+    * Print the number and a newline
+    pop X
+    copy X
+    push register Y
+    output X
+    * newline
+    push character #0A
+    pop X
+    write X
+    * Return to loop
+    jump LOOP
+
+FIZZ
+    push character #00
+    push character 'z'
+    push character 'z'
+    push character 'i'
+    push character 'F'
+    call PRINTSTR
+    jump LOOPBUZZ
+
+BUZZ
+    push character #00
+    push character 'z'
+    push character 'z'
+    push character 'u'
+    push character 'B'
+    call PRINTSTR
+    jump LOOPEND
+
+* Prints a null-terminated string.
+PRINTSTR
+    * Need to get the return index out of the way
+    pop Y
+    pop X
+    push register Y
+    * Copy and check
+    copy X
+    cast boolean X
+    not X
+    push register X
+    * If == 0, return
+    branch PRINTEND
+    * Else, write and jump
+    write Y
+    jump PRINTSTR
+PRINTEND
+    return
